@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect, use} from 'react'
 import './App.css'
 import Header from './components/Header/Header'
 import Map from './components/Map/Map'
@@ -10,12 +10,17 @@ import { getPlacesData } from './api'
 
 const App = () => {
   const [places, setPlaces] = useState([]);
-    const [childClicked, setChildClicked] = useState(null);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
+
+  const [childClicked, setChildClicked] = useState(null);
 
   const [coordinations, setCoordinations] = useState({});
   const [bounds, setBounds] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [type, setType] = useState('restaurants');
+  const [rating, setRating] = useState('');
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(({coords: {latitude, longitude}}) => {
@@ -23,30 +28,39 @@ const App = () => {
     })
   }, []);
 
+  useEffect (() => {
+    const filteredPlaces = places.filter((place) => place.rating > rating);
+    setFilteredPlaces(filteredPlaces);
+  }, [rating])
+  
   useEffect(() => {
     setIsLoading(true);
 
-    if (bounds) {
-      getPlacesData(bounds.sw, bounds.ne)
+    if (bounds &&bounds.sw && bounds.ne) {
+      getPlacesData(type, bounds.sw, bounds.ne)
       .then((data) =>{ console.log(data);
-        setPlaces(data)
+        setPlaces(data);
+        setFilteredPlaces([]);
         setIsLoading(false);
       });
     }
     
-  }, [coordinations, bounds]);
+  }, [type, bounds]);
 
   return (
       <>
         <CssBaseline />
-        <Header />
+        <Header setCoordinations={setCoordinations}/>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 w-full">
           <div className="md:col-span-4">
             <List 
-              places = {places}
+              places = {filteredPlaces.length? filteredPlaces : places}
               childClicked = {childClicked}
               isLoading = {isLoading}
-
+              type={type}
+              setType={setType}
+              rating={rating}
+              setRating={setRating}
             />
           </div>
           <div className="md:col-span-8">
@@ -54,7 +68,7 @@ const App = () => {
               setCoordinations={setCoordinations}
               setBounds={setBounds}
               coordinations={coordinations}
-              places={places}
+              places={filteredPlaces.length? filteredPlaces : places}
               setChildClicked={setChildClicked}
             />
           </div>

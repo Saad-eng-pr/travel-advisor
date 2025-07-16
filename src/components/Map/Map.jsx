@@ -9,7 +9,7 @@ const Map = ({setCoordinations, setBounds, coordinations, places, setChildClicke
   const isDesktop = useMediaQuery("(min-width:600px)");
 
   return (
-    <div className='w-full h-80 md:h-150'>
+    <div className='w-full h-[85vh] md:h-150'>
         <GoogleMapReact
           bootstrapURLKeys = {{ key:'AIzaSyDBNPNqtxt5Oyp8G3wkNjGWdVqIC_z34sc'}}
           defaultCenter={{ lat: 34, lng: -5 }}

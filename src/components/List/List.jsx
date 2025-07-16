@@ -2,12 +2,7 @@ import { useState, useEffect, createRef } from 'react'
 import { FormControl, InputLabel, CircularProgress, MenuItem, Select, Grid } from '@mui/material'
 import PlaceDetails from '../PlaceDetails/PlaceDetails'
 
-const List = ({ places, childClicked, isLoading }) => {
-  const [type, setType] = useState('Restaurants');
-  const [rating, setRating] = useState('');
-
-  console.log({childClicked});
-
+const List = ({ places, childClicked, isLoading, type, setType, rating, setRating }) => {
   const [elRefs, setElRefs] = useState([]);
 
   useEffect(() => {
