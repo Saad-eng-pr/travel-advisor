@@ -2,21 +2,24 @@ import GoogleMapReact from 'google-map-react';
 import { Paper, Typography, useMediaQuery } from '@mui/material' ;
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Rating from '@mui/material/Rating';
-import { useState } from 'react';
+import mapStyles from './mapStyles';
 
-
-const Map = ({setCoordinations, setBounds, coordinations, places, setChildClicked}) => {
+const Map = ({setCoordinations, setBounds, coordinations, places, setChildClicked, weatherData}) => {
   const isDesktop = useMediaQuery("(min-width:600px)");
 
   return (
-    <div className='w-full h-[85vh] md:h-150'>
+    <div className='w-full h-[500px] md:h-[600px] '>
         <GoogleMapReact
-          bootstrapURLKeys = {{ key:'AIzaSyDBNPNqtxt5Oyp8G3wkNjGWdVqIC_z34sc'}}
+          bootstrapURLKeys = {{ key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY , libraries: ['places', 'geometry', 'drawing']}}
           defaultCenter={{ lat: 34, lng: -5 }}
           center={coordinations}
-          defaultZoom={10}
+          defaultZoom={14}
           margin={[50,50,50,50]}
-          option={''}
+          options={{
+            disableDefaultUI: true,
+            zoomControl: true,
+            styles: mapStyles
+          }}
           onChange={(e) => {
             setCoordinations({ lat: e.center.lat, lng: e.center.lng });
             setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw }); //ns: north-east, sw: south-west
@@ -46,6 +49,14 @@ const Map = ({setCoordinations, setBounds, coordinations, places, setChildClicke
               }
             </div>
           ))}
+
+          {/* {weatherData?.list?.map((data, i) => (
+            <div key={i} lat={data.coord.lat} lng={data.coord.lon} height={50} width={50} >
+              <img src={`https://openweathermap.org/img/w/${data.weather[0].icon}.png`} />
+            </div>
+          ))} */}
+ 
+          
         </GoogleMapReact>
     </div>
   )

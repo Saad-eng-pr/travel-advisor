@@ -5,21 +5,25 @@ import Map from './components/Map/Map'
 import List from './components/List/List'
 import PlaceDetails from './components/PlaceDetails/PlaceDetails'
 import { CssBaseline } from '@mui/material' 
-import { getPlacesData } from './api' 
+import { getPlacesData, getWeatherData } from './api' 
 
 
 const App = () => {
   const [places, setPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
 
+  const [weatherData, setWeatherData] = useState([]);
+
   const [childClicked, setChildClicked] = useState(null);
 
   const [coordinations, setCoordinations] = useState({});
+  
   const [bounds, setBounds] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [type, setType] = useState('restaurants');
+  
   const [rating, setRating] = useState('');
 
   useEffect(() => {
@@ -34,11 +38,16 @@ const App = () => {
   }, [rating])
   
   useEffect(() => {
-    setIsLoading(true);
-
     if (bounds &&bounds.sw && bounds.ne) {
+      setIsLoading(true);
+
+      getWeatherData(coordinations.lat, coordinations.lng)
+        .then ((data) => { console.log(data);
+        setWeatherData(data);
+      });
+
       getPlacesData(type, bounds.sw, bounds.ne)
-      .then((data) =>{ console.log(data);
+      .then((data) =>{
         setPlaces(data);
         setFilteredPlaces([]);
         setIsLoading(false);
@@ -70,6 +79,7 @@ const App = () => {
               coordinations={coordinations}
               places={filteredPlaces.length? filteredPlaces : places}
               setChildClicked={setChildClicked}
+              weatherData={weatherData}
             />
           </div>
         </div>
